@@ -1,0 +1,83 @@
+<?php
+    include "customer_authentication.php";
+    include "../shared/classes.php";
+    $pro_name=$_POST['search'];
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    </head>
+    <body class='window'>
+        <div class = " d-flex flex-column vh-100">
+            <div class = "upper_bar d-flex flex-row justify-content">
+                <a href="home.php" style='text-decoration: none; color: black; font-weight: bold; margin-left: 10px; margin-right: 10px;'>Home</a>
+                <?php   
+                    include_once "../shared/connection.php";
+
+                    $row=mysqli_fetch_assoc(mysqli_query($conn,"select * from user where userid=$_SESSION[userid]"));
+                    $concatenatedString = $row['Fname'] . " " . $row['Mname'] . " " . $row['Lname'];
+                    echo"
+                        <div>
+                            <h1 style = 'font-size: 1rem; margin-top:10px; margin-left: 10px; margin-right: 10px; ' >Hello $concatenatedString </h1>
+                        </div>
+                    ";
+                ?>
+                <?php
+                    echo"
+                        <form action='search.php' method='post' class='d-flex flex-row align-items-center'>
+                            <input class='form-control shadow-none' type='text' name='search' value='$pro_name' style=' background-color: #dfdfdf; border: none; margin-left: 20px; margin-top: 15px; width: 500px; shadow: none;'>
+                            <button type='submit' style='margin-top: 15px'>Search</button>
+                        </form>
+                    ";
+                ?>
+                <a href='cart.php' style='text-decoration: none; color: black; font-weight: bold;'>
+                    <img src="../shared/images/images (1).png" style="width:45px;">
+                <a>
+                
+                <div>
+                    <button onclick='checkLogout()'style='text-decoration: none; color: black; margin-right: 10px;'>Logout</button>
+                </div>
+                
+                <a href="profile.php" style="margin-left: 10px; margin-right: 10px;">
+                    <img src="../shared/images/download.png" style="width:45px;">
+                </a>
+            </div>
+           
+            <div class ="d-flex flex-column vh-100 justify-content">
+                <div class="d-flex flex-row">
+                    <?php
+                        include_once "../shared/connection.php"; 
+                        $sql_obj=mysqli_query($conn,"select * from products where product_name like '%$pro_name%' or category like '%$pro_name%'");
+                                            
+                        while($row=mysqli_fetch_assoc($sql_obj)){        
+                            echo "
+                                    <div>
+                                        <div class='pdt-card'>
+                                            <a href='Product_over_view.php?pro_id=$row[product_ID]' style='text-decoration: none;'>
+                                                <div class='name'>$row[product_name]</div>        
+                                                <img class='pdt-img' src='$row[product_image]'>
+                                                <div class='price'><p><strong>Price:</strong> Rs.$row[product_price]</p></div>
+                                            <a>
+                                            <div style='display: flex; justify-content: center; align-items: center; width: 100%'>
+                                                <a href='addCart.php?pro_id=$row[product_ID]' style='text-decoration: none;'>
+                                                    <button class='button1' style=' background-color: #6c757d; '>Cart</button>
+                                                <a>
+                                                <a href='buy.php?pro_id=$row[product_ID]' style='text-decoration: none;'>
+                                                    <button class='button1' style=' background-color: green; '>Buy</button>
+                                                <a>
+                                            </div>    
+                                        </div>                                    
+                                    </div>
+                                ";
+                            }
+                    ?>
+                </div>
+            </div>           
+        </div>
+    </body>
+</html>
